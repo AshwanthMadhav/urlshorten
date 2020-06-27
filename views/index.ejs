@@ -2,6 +2,9 @@
 <html>
 
 <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
 </head>
 
 <body>
@@ -24,14 +27,14 @@
             </thead>
             <tbody>
                 <% urls.forEach(shortUrl => { %>
-                    <tr>
-                        <td><a href="<%= shortUrl.url %>"><%= shortUrl.url %></a></td>
-                        <td><a href="<%= shortUrl.shortUrl %>"><%= shortUrl.shortUrl %></a></td>
-                        <td><%= shortUrl.hits %></td>
-                        <td><%= shortUrl.lastHourCount %></td>
-                        <td><%= new Date(shortUrl.createdAt) %></td>
-                    </tr>
-                    <% }) %>
+                <tr>
+                    <td><a href="<%= shortUrl.url %>"><%= shortUrl.url %></a></td>
+                    <td><a href="<%= shortUrl.shortUrl %>"><%= shortUrl.shortUrl %></a></td>
+                    <td><%= shortUrl.hits %></td>
+                    <td><%= shortUrl.lastHourCount %></td>
+                    <td><%= new Date(shortUrl.createdAt) %></td>
+                </tr>
+                <% }) %>
             </tbody>
         </table>
     </div>
