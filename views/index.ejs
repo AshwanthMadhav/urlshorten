@@ -8,12 +8,16 @@
 </head>
 
 <body>
-    <div>
-        <h1>URL Short</h1>
-        <form action="/shortUrl" method="POST">
-            <input placeholder="enter url here" type="url" name="url" id="url">
-            <button class="btn btn-success" type="submit">Short</button>
+    <div class='container'>
+        <h1>Shorten URL</h1>
+        <form action="/shortUrl" method="POST" class="form-inline">
+            <div class="form-group">
+                <input type="url" name="url" id="url" class="form-control" required placeholder="Enter url here">
+            </div>
+            <button class="btn btn-primary" type="submit">Short</button>
         </form>
+
+        
 
         <table class="table">
             <thead>
