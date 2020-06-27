@@ -1,5 +1,6 @@
 const express = require('express')
 const mongoose = require('mongoose')
+var moment = require('moment');
 const Url = require('./models/urls')
 const Counter = require('./models/counter')
 const app = express()
@@ -43,7 +44,7 @@ app.get('/', async (req, res) => {
     },
     { $addFields: { lastHourCount: { $size: "$lastHour" } } }
   ])
-  res.render('index', { urls: urls })
+  res.render('index', { urls: urls, moment: moment })
 })
 
 app.post('/shortUrl', async (req, res) => {

@@ -36,7 +36,7 @@
                     <td><a href="<%= shortUrl.shortUrl %>"><%= shortUrl.shortUrl %></a></td>
                     <td><%= shortUrl.hits %></td>
                     <td><%= shortUrl.lastHourCount %></td>
-                    <td><%= new Date(shortUrl.createdAt) %></td>
+                    <td><%= moment(shortUrl.createdAt).format('HH:mm:ss YYYY-MM-DD') %></td>
                 </tr>
                 <% }) %>
             </tbody>
