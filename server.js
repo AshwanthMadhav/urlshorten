@@ -4,8 +4,15 @@ var moment = require('moment');
 const Url = require('./models/urls')
 const Counter = require('./models/counter')
 const app = express()
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 
-mongoose.connect('mongodb+srv://admin:admin2020@urlshortner-ordjy.mongodb.net/urlshortner?retryWrites=true&w=majority', {
+const databaseUrl = process.env.DATABASE || 'mongodb://localhost:27017/smstemplate'
+const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+
+
+mongoose.connect(databaseUrl, {
   useNewUrlParser: true, useUnifiedTopology: true
 })
 
@@ -13,47 +20,57 @@ app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
 
 app.get('/', async (req, res) => {
-  var lastHour = new Date();
-  lastHour.setHours(lastHour.getHours() - 1);
-  console.log(lastHour)
-  const urls = await Url.aggregate([
-    {
-      $lookup: {
-        from: "counters",
-        let: {
-          id: "$_id"
-        },
-        as: "lastHour",
-        pipeline: [
-          {
-            $match:
-            {
-              $expr:
-              {
-                $and:
-                  [
-                    { $eq: ["$urlId", "$$id"] },
-                    { $gte: ["$createdAt", new Date(lastHour)] }
-                  ]
-              }
+  try {
 
-            }
+    var lastHour = new Date();
+    lastHour.setHours(lastHour.getHours() - 1);
+    console.log(lastHour)
+    const urls = await Url.aggregate([
+      {
+        $lookup: {
+          from: "counters",
+          let: {
+            id: "$_id"
           },
-        ],
-      }
-    },
-    { $addFields: { lastHourCount: { $size: "$lastHour" } } }
-  ])
-  res.render('index', { urls: urls, moment: moment })
+          as: "lastHour",
+          pipeline: [
+            {
+              $match:
+              {
+                $expr:
+                {
+                  $and:
+                    [
+                      { $eq: ["$urlId", "$$id"] },
+                      { $gte: ["$createdAt", new Date(lastHour)] }
+                    ]
+                }
+
+              }
+            },
+          ],
+        }
+      },
+      { $addFields: { lastHourCount: { $size: "$lastHour" } } }
+    ])
+    res.render('index', { urls: urls, moment: moment, baseUrl: baseUrl })
+  } catch (e) {
+    throw e
+  }
+
 })
 
 app.post('/shortUrl', async (req, res) => {
-  let shortUrl = generateRandomString(6)
+  console.log(1)
+  let shortUrl = await generateRandomString(6)
+  console.log(2)
   let obj = {
     url: req.body.url,
     shortUrl: shortUrl,
     createdAt: new Date()
   }
+  console.log(3)
+  console.log(obj)
   await Url.create(obj)
   res.redirect('/')
 })
@@ -72,13 +89,21 @@ app.get('/:shortUrl', async (req, res) => {
 })
 
 
-function generateRandomString(length) {
+async function generateRandomString(length) {
+  console.log("Inside random String")
   let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
     retVal = "";
   for (let i = 0, n = charset.length; i < length; ++i) {
     retVal += charset.charAt(Math.floor(Math.random() * n));
   }
-  return retVal;
+
+  // console.log(retVal)
+  let res = await Url.findOne({ where: { code: retVal } })
+  if (res) {
+    generateRandomString(length)
+  } else {
+    return retVal;
+  }
 }
 
 
