@@ -33,7 +33,7 @@
                 <% urls.forEach(shortUrl => { %>
                 <tr>
                     <td><a href="<%= shortUrl.url %>"><%= shortUrl.url %></a></td>
-                    <td><a href="<%= shortUrl.shortUrl %>"><%= baseUrl + "/" +shortUrl.shortUrl %></a></td>
+                    <td><a href="<%= shortUrl.shortUrl %>"><%=shortUrl.shortUrl %></a></td>
                     <td><%= shortUrl.hits %></td>
                     <td><%= shortUrl.lastHourCount %></td>
                     <td><%= moment(shortUrl.createdAt).calendar() %></td>
